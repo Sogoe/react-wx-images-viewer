@@ -113,6 +113,7 @@ class ImageContainer extends PureComponent {
     if(this.animationID){
       raf.cancel(this.animationID);
     }
+    this.initScroll = false;
     switch (event.touches.length) {
       case 1:
         let targetEvent = event.touches[0];
@@ -173,45 +174,46 @@ class ImageContainer extends PureComponent {
           this.isTap = false;
         }
 
-        //图片宽度等于初始宽度，直接调用 handleMove 函数
-        if(this.state.width === this.originWidth){
-          if(this.props.handleMove){
-            // this.callHandleStart();
-            // this.props.handleMove(diffX);
-            this.callHandleMove(diffX);
-          }
-        } else{
-          this.setState((prevState, props) =>{
-            let top = (props.screenHeight - prevState.height)/2,
-              left = this.startLeft + diffX;
+        if(!this.initScroll) {
+          this.verticalScroll = Math.abs(diffY) > Math.abs(diffX);
+          this.initScroll = true;
+        }
 
+        //判断是垂直方向的滑动还是水平方向的滑动
+        if(this.verticalScroll) {
+          this.verticalScroll = true;
+          this.setState((prevState, props) =>{
+            let top = (props.screenHeight - prevState.height)/2;
             if(prevState.height > props.screenHeight){
               top = setScope(this.startTop + diffY, ( props.screenHeight - prevState.height ), 0 );
             }
-            console.info("left = %s, this.originWidth - prevState.width = %s",left,this.originWidth - prevState.width)
-            //存在 handleMove 函数
+            return {
+              top
+            };
+          });
+        } else {
+
+          if(this.state.width === this.originWidth){
+            if(this.props.handleMove){
+              this.callHandleMove(diffX);
+            }
+          } else{
+            let left = this.startLeft + diffX;
             if(props.handleMove){
               if(left < this.originWidth - prevState.width){
-                // this.callHandleStart();
-                // props.handleMove(left + prevState.width - this.originWidth);
                 this.callHandleMove(left + prevState.width - this.originWidth);
               } else if(left > 0){
-                // this.callHandleStart();
-                // props.handleMove(left);
                 this.callHandleMove(left);
               }
             }
 
             left = setScope(left, this.originWidth - prevState.width, 0);
-
-            console.info("this.startX = %s, this.startY = %s, this.startLeft = %s, this.startTop = %s, diffX = %s, diffY = %s", this.startX, this.startY, this.startLeft, this.startTop, diffX, diffY);
             return {
-              left,
-              top
-            }
-          })
+              left
+            };
+          }
         }
-
+        
       break;
 
       case 2: //两个手指
@@ -338,7 +340,7 @@ class ImageContainer extends PureComponent {
         top = tween.easeOutQuart(this.animateCurTime, this.animateStartValue.y, this.animateFinalValue.y, maxAnimateTime);
 
       this.setState({
-        left,
+        left: isNaN(left) || 0,
         top
       })
       //add Time 
