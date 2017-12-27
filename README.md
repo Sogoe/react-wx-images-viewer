@@ -11,7 +11,7 @@ npm install --save react-wx-images-viewer
 ```
 
 # Example
-- [demo1](https://react-ld.github.io/react-wx-images-viewer/index.html)
+- [demo1](https://sogoe.github.io/react-wx-images-viewer/index.html)
 
 # How to use
 ```js

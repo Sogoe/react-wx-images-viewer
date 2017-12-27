@@ -6,7 +6,7 @@
 通过 ReactDOM 在 body 根级创建独立的 div 进行渲染，参考 [react-modal](https://github.com/reactjs/react-modal) 使用 ReactDOM.unstable_renderSubtreeIntoContainer 进行渲染
 
 # 示例
-- [demo1](https://react-ld.github.io/react-wx-images-viewer/index.html)
+- [demo1](https://sogoe.github.io/react-wx-images-viewer/index.html)
 
 # 基础功能
 - 多图左右切换浏览，不支持循环
